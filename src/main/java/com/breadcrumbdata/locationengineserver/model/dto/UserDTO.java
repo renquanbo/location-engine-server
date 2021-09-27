@@ -1,6 +1,9 @@
 package com.breadcrumbdata.locationengineserver.model.dto;
 
 
+import com.breadcrumbdata.locationengineserver.model.enums.Role;
+import com.breadcrumbdata.locationengineserver.util.validator.RolePattern;
+
 import javax.validation.constraints.NotBlank;
 
 public class UserDTO {
@@ -13,8 +16,8 @@ public class UserDTO {
     @NotBlank(message = "Password must not be empty")
     private String password;
 
-    @NotBlank(message = "Role must not be empty")
-    private String role;
+    @RolePattern(regexp = "ROLE_USER|ROLE_MANAGER", message = "Role must not be empty")
+    private Role role;
 
     public Long getId() {
         return id;
@@ -40,11 +43,11 @@ public class UserDTO {
         this.password = password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
