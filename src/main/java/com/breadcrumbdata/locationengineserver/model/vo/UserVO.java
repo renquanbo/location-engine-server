@@ -1,5 +1,7 @@
 package com.breadcrumbdata.locationengineserver.model.vo;
 
+import com.breadcrumbdata.locationengineserver.model.enums.Role;
+
 import javax.validation.constraints.NotBlank;
 
 public class UserVO {
@@ -7,7 +9,7 @@ public class UserVO {
 
     private String email;
 
-    private String role;
+    private Role role;
 
     public Long getId() {
         return id;
@@ -25,11 +27,11 @@ public class UserVO {
         this.email = email;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }

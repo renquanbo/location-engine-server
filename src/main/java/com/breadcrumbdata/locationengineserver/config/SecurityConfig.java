@@ -8,6 +8,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import com.breadcrumbdata.locationengineserver.repository.UserRepository;
+import com.breadcrumbdata.locationengineserver.service.impl.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,8 +37,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder(11);
     }
 
+    private final UserRepository userRepository;
+
+    @Autowired
+    public SecurityConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception{
+
 
         http.csrf((csrf) -> csrf.ignoringAntMatchers("/token"))
                 .httpBasic(Customizer.withDefaults())
@@ -45,10 +57,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
                 );
 
-        http.csrf().disable()
-                .authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers("/api/sign-up").permitAll()
                 .anyRequest().authenticated();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(new CustomUserDetailsService(userRepository));
+        super.configure(auth);
     }
 
     // Used by spring security if CORS is enabled.
