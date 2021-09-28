@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception{
 
 
-        http.csrf((csrf) -> csrf.ignoringAntMatchers("/token"))
+        http.csrf((csrf) -> csrf.ignoringAntMatchers("/login","/api/sign-up"))
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

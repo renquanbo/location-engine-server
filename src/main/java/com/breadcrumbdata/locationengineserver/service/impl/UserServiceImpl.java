@@ -37,4 +37,17 @@ public class UserServiceImpl implements UserService {
         userVO.setRole(resultUser.getRole());
         return userVO;
     }
+
+    @Override
+    public UserVO findUserByUsername(String name) {
+        User user = userRepository.findByEmail(name);
+        if(user == null) {
+            return null;
+        }
+        UserVO userVO = new UserVO();
+        userVO.setId(user.getId());
+        userVO.setEmail(user.getEmail());
+        userVO.setRole(user.getRole());
+        return userVO;
+    }
 }
