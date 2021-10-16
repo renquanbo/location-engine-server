@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -47,7 +48,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
 
-
         http.csrf((csrf) -> csrf.ignoringAntMatchers("/login","/api/sign-up"))
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
@@ -56,6 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
                 );
+
+        http.cors();
 
         http.authorizeRequests()
                 .antMatchers("/api/sign-up").permitAll()
@@ -75,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
+        config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
@@ -86,4 +88,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(this.key).build();
     }
+
 }
