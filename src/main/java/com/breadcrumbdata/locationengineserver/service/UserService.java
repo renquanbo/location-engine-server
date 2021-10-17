@@ -6,4 +6,5 @@ import com.breadcrumbdata.locationengineserver.model.vo.UserVO;
 public interface UserService {
     UserVO create(UserDTO userDTO);
     UserVO findUserByUsername(String name);
+    Boolean check(String currentPassword, String password);
 }

@@ -1,5 +1,6 @@
 package com.breadcrumbdata.locationengineserver.service.impl;
 
+import com.breadcrumbdata.locationengineserver.config.exceptions.UserNameNotFoundException;
 import com.breadcrumbdata.locationengineserver.model.User;
 import com.breadcrumbdata.locationengineserver.model.dto.UserDTO;
 import com.breadcrumbdata.locationengineserver.model.vo.UserVO;
@@ -42,12 +43,18 @@ public class UserServiceImpl implements UserService {
     public UserVO findUserByUsername(String name) {
         User user = userRepository.findByEmail(name);
         if(user == null) {
-            return null;
+            throw new UserNameNotFoundException("username does not exist");
         }
         UserVO userVO = new UserVO();
         userVO.setId(user.getId());
         userVO.setEmail(user.getEmail());
         userVO.setRole(user.getRole());
         return userVO;
+    }
+
+    @Override
+    public Boolean check(String currentPassword, String username) {
+        User user = userRepository.findByEmail(username);
+        return this.passwordEncoder.matches(currentPassword, user.getPassword());
     }
 }
