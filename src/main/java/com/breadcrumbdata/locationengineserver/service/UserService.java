@@ -7,4 +7,5 @@ public interface UserService {
     UserVO create(UserDTO userDTO);
     UserVO findUserByUsername(String name);
     Boolean check(String currentPassword, String password);
+    Boolean usernameExist(String email);
 }

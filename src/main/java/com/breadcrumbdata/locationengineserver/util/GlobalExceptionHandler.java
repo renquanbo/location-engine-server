@@ -3,7 +3,9 @@ package com.breadcrumbdata.locationengineserver.util;
 import com.breadcrumbdata.locationengineserver.config.CustomResponse;
 import com.breadcrumbdata.locationengineserver.config.ErrorResponse;
 import com.breadcrumbdata.locationengineserver.config.exceptions.UnSupportedAuthenticationProtocolException;
+import com.breadcrumbdata.locationengineserver.config.exceptions.UserNameAlreadyExistsException;
 import com.breadcrumbdata.locationengineserver.config.exceptions.UserNameNotFoundException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -42,5 +44,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException ex, HttpServletRequest request) {
         return ResponseEntity.status(401).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(UserNameAlreadyExistsException.class)
+    public ResponseEntity<?> handleUserNameAlreadyExistsException(UserNameAlreadyExistsException ex, HttpServletRequest request) {
+        return ResponseEntity.status(400).body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<?> handleInvalidFormatException(InvalidFormatException ex, HttpServletRequest request) {
+        if (ex.getMessage().contains("model.enums.Role")) {
+            return ResponseEntity.status(400).body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "invalid role"));
+        }
+        return ResponseEntity.status(400).body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
     }
 }
