@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLIntegrityConstraintViolationException;
 
@@ -57,5 +58,12 @@ public class GlobalExceptionHandler {
             return ResponseEntity.status(400).body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "invalid role"));
         }
         return ResponseEntity.status(400).body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex, HttpServletRequest request) {
+        String message = ex.getMessage();
+        message = message.replace("com.breadcrumbdata.locationengineserver.model.", "");
+        return ResponseEntity.status(400).body(new ErrorResponse((HttpStatus.BAD_REQUEST.value()), message));
     }
 }
