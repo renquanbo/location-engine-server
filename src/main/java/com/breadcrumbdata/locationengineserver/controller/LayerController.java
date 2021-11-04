@@ -1,6 +1,7 @@
 package com.breadcrumbdata.locationengineserver.controller;
 
 import com.breadcrumbdata.locationengineserver.config.CustomResponse;
+import com.breadcrumbdata.locationengineserver.config.exceptions.LayerIdNotFoundException;
 import com.breadcrumbdata.locationengineserver.model.ListResponse;
 import com.breadcrumbdata.locationengineserver.model.Paginator;
 import com.breadcrumbdata.locationengineserver.model.dto.LayerDTO;
@@ -13,9 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -61,6 +59,30 @@ public class LayerController {
         LayersResponse layersResponse = new LayersResponse(layerVOList, pageLayerVO.getTotalElements(), paginator);
         CustomResponse customResponse = new CustomResponse();
         customResponse.setData(layersResponse);
+        customResponse.setMsg("success");
+        customResponse.setCode(HttpStatus.OK.value());
+        return ResponseEntity.ok(customResponse);
+    }
+
+    @PutMapping("/layers/{id}")
+    public ResponseEntity<CustomResponse<LayerVO>> update(@PathVariable("id") Integer id, @RequestBody LayerDTO updateRequest) {
+        LayerVO layerVO = layerService.get(id);
+        if(layerVO == null) {
+            throw new LayerIdNotFoundException("Layer can not be found by id " + id);
+        }
+        LayerVO result = layerService.update(id, updateRequest);
+        CustomResponse<LayerVO> customResponse = new CustomResponse<>();
+        customResponse.setData(result);
+        customResponse.setMsg("success");
+        customResponse.setCode(HttpStatus.OK.value());
+        return ResponseEntity.ok(customResponse);
+    }
+
+    @DeleteMapping("/layers/{id}")
+    public ResponseEntity delete(@PathVariable("id") Integer id) {
+        boolean result = layerService.delete(id);
+        CustomResponse customResponse = new CustomResponse<>();
+        customResponse.setData(result);
         customResponse.setMsg("success");
         customResponse.setCode(HttpStatus.OK.value());
         return ResponseEntity.ok(customResponse);

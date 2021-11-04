@@ -1,5 +1,6 @@
 package com.breadcrumbdata.locationengineserver.service.impl;
 
+import com.breadcrumbdata.locationengineserver.config.exceptions.LayerIdNotFoundException;
 import com.breadcrumbdata.locationengineserver.model.Layer;
 import com.breadcrumbdata.locationengineserver.model.dto.LayerDTO;
 import com.breadcrumbdata.locationengineserver.model.vo.LayerVO;
@@ -39,8 +40,15 @@ public class LayerServiceImpl implements LayerService {
     }
 
     @Override
-    public LayerVO update(LayerDTO layerDTO) {
-        return null;
+    public LayerVO update(Integer id, LayerDTO layerDTO) {
+        Layer layer = new Layer();
+        BeanUtils.copyProperties(layerDTO, layer);
+        layer.setId(id);
+        Layer result = layerRepository.save(layer);
+        LayerVO layerVO = new LayerVO();
+        layerVO.setId(result.getId());
+        BeanUtils.copyProperties(result,layerVO);
+        return layerVO;
     }
 
     @Override
@@ -51,17 +59,6 @@ public class LayerServiceImpl implements LayerService {
         return layerVO;
     }
 
-//    @Override
-//    public List<LayerVO> list() {
-//        List<Layer> layerList = layerRepository.findAll();
-//        List<LayerVO> layerVOList = new ArrayList<>();
-//        layerList.stream().forEach(item -> {
-//           LayerVO layerVO = new LayerVO();
-//           BeanUtils.copyProperties(item, layerVO);
-//           layerVOList.add(layerVO);
-//        });
-//        return layerVOList;
-//    }
     @Override
     public Page<LayerVO> findAll(Pageable pageable) {
         Page<Layer> layers = layerRepository.findAll(pageable);
@@ -76,6 +73,12 @@ public class LayerServiceImpl implements LayerService {
 
     @Override
     public Boolean delete(Integer id) {
-        return null;
+        boolean exists = layerRepository.existsById(id);
+        if(exists) {
+            layerRepository.deleteById(id);
+            return true;
+        } else {
+            throw new LayerIdNotFoundException("The layer cannot be deleted, because the layer cannot be found");
+        }
     }
 }

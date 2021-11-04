@@ -2,6 +2,7 @@ package com.breadcrumbdata.locationengineserver.util;
 
 import com.breadcrumbdata.locationengineserver.config.CustomResponse;
 import com.breadcrumbdata.locationengineserver.config.ErrorResponse;
+import com.breadcrumbdata.locationengineserver.config.exceptions.LayerIdNotFoundException;
 import com.breadcrumbdata.locationengineserver.config.exceptions.UnSupportedAuthenticationProtocolException;
 import com.breadcrumbdata.locationengineserver.config.exceptions.UserNameAlreadyExistsException;
 import com.breadcrumbdata.locationengineserver.config.exceptions.UserNameNotFoundException;
@@ -64,6 +65,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex, HttpServletRequest request) {
         String message = ex.getMessage();
         message = message.replace("com.breadcrumbdata.locationengineserver.model.", "");
+        return ResponseEntity.status(400).body(new ErrorResponse((HttpStatus.BAD_REQUEST.value()), message));
+    }
+
+    @ExceptionHandler(LayerIdNotFoundException.class)
+    public ResponseEntity<?> handleLayerIdNotFoundException(LayerIdNotFoundException ex, HttpServletRequest request) {
+        String message = ex.getMessage();
         return ResponseEntity.status(400).body(new ErrorResponse((HttpStatus.BAD_REQUEST.value()), message));
     }
 }
