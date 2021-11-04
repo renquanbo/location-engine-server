@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     public UserVO findUserByUsername(String name) {
         User user = userRepository.findByEmail(name);
         if(user == null) {
-            throw new UserNameNotFoundException("username does not exist");
+            return null;
         }
         UserVO userVO = new UserVO();
         userVO.setId(user.getId());
@@ -56,5 +56,13 @@ public class UserServiceImpl implements UserService {
     public Boolean check(String currentPassword, String username) {
         User user = userRepository.findByEmail(username);
         return this.passwordEncoder.matches(currentPassword, user.getPassword());
+    }
+
+    @Override
+    public Boolean usernameExist(String email) {
+        if(findUserByUsername(email) != null) {
+            return true;
+        }
+        return false;
     }
 }

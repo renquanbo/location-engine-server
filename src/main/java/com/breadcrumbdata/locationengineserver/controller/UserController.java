@@ -1,6 +1,7 @@
 package com.breadcrumbdata.locationengineserver.controller;
 
 import com.breadcrumbdata.locationengineserver.config.CustomResponse;
+import com.breadcrumbdata.locationengineserver.config.exceptions.UserNameAlreadyExistsException;
 import com.breadcrumbdata.locationengineserver.model.dto.UserDTO;
 import com.breadcrumbdata.locationengineserver.model.vo.UserVO;
 import com.breadcrumbdata.locationengineserver.service.UserService;
@@ -27,6 +28,9 @@ public class UserController {
 
     @PostMapping("/sign-up")
     public ResponseEntity signUp(@RequestBody @Valid UserDTO userRegisterRequest) {
+        if(userService.usernameExist(userRegisterRequest.getEmail())) {
+            throw new UserNameAlreadyExistsException("email already exists");
+        }
         UserVO result = userService.create(userRegisterRequest);
         CustomResponse customResponse = new CustomResponse();
         customResponse.setCode(HttpStatus.OK.value());
