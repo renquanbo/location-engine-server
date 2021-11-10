@@ -29,9 +29,9 @@ public class LayerController {
     }
 
     @PostMapping("/layers")
-    public ResponseEntity create(@RequestBody LayerDTO createLayerRequest) throws IOException {
+    public ResponseEntity<CustomResponse<LayerVO>> create(@RequestBody LayerDTO createLayerRequest) throws IOException {
         LayerVO layerVO = layerService.create(createLayerRequest);
-        CustomResponse customResponse = new CustomResponse();
+        CustomResponse<LayerVO> customResponse = new CustomResponse<>();
         customResponse.setData(layerVO);
         customResponse.setMsg("success");
         customResponse.setCode(HttpStatus.OK.value());
@@ -39,9 +39,9 @@ public class LayerController {
     }
 
     @GetMapping("/layers/{id}")
-    public ResponseEntity get(@PathVariable("id") Integer id) {
+    public ResponseEntity<CustomResponse<LayerVO>> get(@PathVariable("id") Integer id) {
         LayerVO layerVO = layerService.get(id);
-        CustomResponse customResponse = new CustomResponse();
+        CustomResponse<LayerVO> customResponse = new CustomResponse<>();
         customResponse.setData(layerVO);
         customResponse.setMsg("success");
         customResponse.setCode(HttpStatus.OK.value());
@@ -49,7 +49,7 @@ public class LayerController {
     }
 
     @GetMapping("/layers")
-    public ResponseEntity getLayerList(
+    public ResponseEntity<CustomResponse<LayersResponse>> getLayerList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable paging = PageRequest.of(page, size);
@@ -57,7 +57,7 @@ public class LayerController {
         List<LayerVO> layerVOList = pageLayerVO.getContent();
         Paginator paginator = new Paginator(pageLayerVO.getNumber(),pageLayerVO.getSize());
         LayersResponse layersResponse = new LayersResponse(layerVOList, pageLayerVO.getTotalElements(), paginator);
-        CustomResponse customResponse = new CustomResponse();
+        CustomResponse<LayersResponse> customResponse = new CustomResponse<>();
         customResponse.setData(layersResponse);
         customResponse.setMsg("success");
         customResponse.setCode(HttpStatus.OK.value());
@@ -79,9 +79,9 @@ public class LayerController {
     }
 
     @DeleteMapping("/layers/{id}")
-    public ResponseEntity delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("id") Integer id) {
         boolean result = layerService.delete(id);
-        CustomResponse customResponse = new CustomResponse<>();
+        CustomResponse<Boolean> customResponse = new CustomResponse<>();
         customResponse.setData(result);
         customResponse.setMsg("success");
         customResponse.setCode(HttpStatus.OK.value());
