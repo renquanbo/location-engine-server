@@ -1,11 +1,11 @@
 package com.breadcrumbdata.locationengineserver.controller;
 
 import com.breadcrumbdata.locationengineserver.config.CustomResponse;
+import com.breadcrumbdata.locationengineserver.config.exceptions.AnchorIdOrNameAlreadyExistsException;
 import com.breadcrumbdata.locationengineserver.model.ListResponse;
 import com.breadcrumbdata.locationengineserver.model.Paginator;
 import com.breadcrumbdata.locationengineserver.model.dto.AnchorDTO;
 import com.breadcrumbdata.locationengineserver.model.vo.AnchorVO;
-import com.breadcrumbdata.locationengineserver.model.vo.LayerVO;
 import com.breadcrumbdata.locationengineserver.service.AnchorService;
 import com.breadcrumbdata.locationengineserver.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +31,9 @@ public class AnchorController {
 
     @PostMapping("/anchors")
     public ResponseEntity<CustomResponse<AnchorVO>> create(@RequestBody AnchorDTO anchorDTO){
+        if(anchorService.anchorIdOrNameExists(anchorDTO.getId(), anchorDTO.getName())) {
+            throw new AnchorIdOrNameAlreadyExistsException("Anchor id or name exists!");
+        }
         AnchorVO result = anchorService.create(anchorDTO);
         CustomResponse<AnchorVO> customResponse = new CustomResponse<>();
         customResponse.setData(result);
@@ -47,24 +50,37 @@ public class AnchorController {
     }
 
     @GetMapping("/anchors")
-    public ResponseEntity<CustomResponse<AnchorResponse>> list(
+    public ResponseEntity<CustomResponse<AnchorListResponse>> getAnchorListByLayerId(
+            @RequestParam () int layerId,
             @RequestParam (defaultValue = "0") int page,
             @RequestParam (defaultValue = "10") int size
     ) {
         Pageable paging = PageRequest.of(page, size);
-        Page<AnchorVO> anchorVOPage = anchorService.findAll(paging);
+        Page<AnchorVO> anchorVOPage = anchorService.findAllByLayerId(layerId, paging);
+        return getAnchorListResponseByPage(anchorVOPage, layerId);
+    }
+
+    private ResponseEntity<CustomResponse<AnchorListResponse>> getAnchorListResponseByPage(Page<AnchorVO> anchorVOPage, Integer layerId) {
         List<AnchorVO> anchorVOList = anchorVOPage.getContent();
         Paginator paginator = new Paginator(anchorVOPage.getNumber(), anchorVOPage.getSize());
-        AnchorResponse anchorResponse = new AnchorResponse(anchorVOList, anchorVOPage.getTotalElements(), paginator);
-        CustomResponse<AnchorResponse> customResponse = new ResponseUtil<AnchorResponse>().generate(anchorResponse);
+        AnchorListResponse anchorResponse = new AnchorListResponse(anchorVOList, anchorService.totalByLayerId(layerId), paginator);
+        CustomResponse<AnchorListResponse> customResponse = new ResponseUtil<AnchorListResponse>().generate(anchorResponse);
         return ResponseEntity.ok(customResponse);
     }
 
-    class AnchorResponse extends ListResponse {
+    class AnchorListResponse extends ListResponse {
         List<AnchorVO> anchors;
 
-        AnchorResponse(List<AnchorVO> anchors, Long total, Paginator paginator) {
+        AnchorListResponse(List<AnchorVO> anchors, Long total, Paginator paginator) {
             super(total, paginator);
+            this.anchors = anchors;
+        }
+
+        public List<AnchorVO> getAnchors() {
+            return anchors;
+        }
+
+        public void setAnchors(List<AnchorVO> anchors) {
             this.anchors = anchors;
         }
     }

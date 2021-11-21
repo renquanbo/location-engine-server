@@ -60,7 +60,7 @@ public class LayerServiceImpl implements LayerService {
     }
 
     @Override
-    public Page<LayerVO> findAll(Pageable pageable) {
+    public Page<LayerVO> findAllByPage(Pageable pageable) {
         Page<Layer> layers = layerRepository.findAll(pageable);
         List<LayerVO> layerVOList = new ArrayList<>();
         layers.stream().forEach(item -> {
@@ -68,7 +68,19 @@ public class LayerServiceImpl implements LayerService {
             BeanUtils.copyProperties(item, layerVO);
             layerVOList.add(layerVO);
         });
-        return new PageImpl<LayerVO>(layerVOList);
+        return new PageImpl<>(layerVOList);
+    }
+
+    @Override
+    public List<LayerVO> findAll() {
+        List<Layer> layers = layerRepository.findAll();
+        List<LayerVO> layerVOList = new ArrayList<>();
+        layers.forEach(item -> {
+            LayerVO layerVO = new LayerVO();
+            BeanUtils.copyProperties(item, layerVO);
+            layerVOList.add(layerVO);
+        });
+        return layerVOList;
     }
 
     @Override

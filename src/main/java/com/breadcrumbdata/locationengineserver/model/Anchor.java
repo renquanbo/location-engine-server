@@ -28,7 +28,10 @@ public class Anchor {
 
     @Column(nullable = false)
     @Positive
-    private Integer layer;
+    private Integer layerNumber;
+
+    @Column(nullable = false)
+    private Integer layerId;
 
     @Max(100)
     @Min(0)
@@ -82,12 +85,12 @@ public class Anchor {
         this.anchorGroup = group;
     }
 
-    public Integer getLayer() {
-        return layer;
+    public Integer getLayerNumber() {
+        return layerNumber;
     }
 
-    public void setLayer(Integer layer) {
-        this.layer = layer;
+    public void setLayerNumber(Integer layer) {
+        this.layerNumber = layer;
     }
 
     public Integer getBatteryPercentage() {
@@ -96,5 +99,13 @@ public class Anchor {
 
     public void setBatteryPercentage(Integer batteryPercentage) {
         this.batteryPercentage = batteryPercentage;
+    }
+
+    public Integer getLayerId() {
+        return layerId;
+    }
+
+    public void setLayerId(Integer layerId) {
+        this.layerId = layerId;
     }
 }

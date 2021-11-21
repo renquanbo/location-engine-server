@@ -13,7 +13,9 @@ public class AnchorVO {
 
     private Integer anchorGroup;
 
-    private Integer layer;
+    private Integer layerId;
+
+    private Integer layerNumber;
 
     private Integer batteryPercentage;
 
@@ -65,12 +67,20 @@ public class AnchorVO {
         this.anchorGroup = anchorGroup;
     }
 
-    public Integer getLayer() {
-        return layer;
+    public Integer getLayerId() {
+        return layerId;
     }
 
-    public void setLayer(Integer layer) {
-        this.layer = layer;
+    public void setLayerId(Integer layerId) {
+        this.layerId = layerId;
+    }
+
+    public Integer getLayerNumber() {
+        return layerNumber;
+    }
+
+    public void setLayerNumber(Integer layerNumber) {
+        this.layerNumber = layerNumber;
     }
 
     public Integer getBatteryPercentage() {
@@ -80,4 +90,5 @@ public class AnchorVO {
     public void setBatteryPercentage(Integer batteryPercentage) {
         this.batteryPercentage = batteryPercentage;
     }
+
 }

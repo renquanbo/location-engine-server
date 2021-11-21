@@ -11,4 +11,7 @@ public interface AnchorService {
     AnchorVO update(Integer id, AnchorDTO anchorDTO);
     AnchorVO get(Integer id);
     Page<AnchorVO> findAll(Pageable pageable);
+    Page<AnchorVO> findAllByLayerId(Integer layerId, Pageable pageable);
+    Boolean anchorIdOrNameExists(Integer id, String name);
+    long totalByLayerId(Integer layerId);
 }

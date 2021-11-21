@@ -50,18 +50,29 @@ public class LayerController {
 
     @GetMapping("/layers")
     public ResponseEntity<CustomResponse<LayersResponse>> getLayerList(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable paging = PageRequest.of(page, size);
-        Page<LayerVO> pageLayerVO = layerService.findAll(paging);
-        List<LayerVO> layerVOList = pageLayerVO.getContent();
-        Paginator paginator = new Paginator(pageLayerVO.getNumber(),pageLayerVO.getSize());
-        LayersResponse layersResponse = new LayersResponse(layerVOList, pageLayerVO.getTotalElements(), paginator);
-        CustomResponse<LayersResponse> customResponse = new CustomResponse<>();
-        customResponse.setData(layersResponse);
-        customResponse.setMsg("success");
-        customResponse.setCode(HttpStatus.OK.value());
-        return ResponseEntity.ok(customResponse);
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+        if (page == null || size == null) {
+            List<LayerVO> layerVOList = layerService.findAll();
+            LayersResponse layersResponse = new LayersResponse(layerVOList, (long) layerVOList.size(), null);
+            CustomResponse<LayersResponse> customResponse = new CustomResponse<>();
+            customResponse.setData(layersResponse);
+            customResponse.setMsg("success");
+            customResponse.setCode(HttpStatus.OK.value());
+            return ResponseEntity.ok(customResponse);
+        } else {
+            Pageable paging = PageRequest.of(page, size);
+            Page<LayerVO> pageLayerVO = layerService.findAllByPage(paging);
+            List<LayerVO> layerVOList = pageLayerVO.getContent();
+            Paginator paginator = new Paginator(pageLayerVO.getNumber(),pageLayerVO.getSize());
+            LayersResponse layersResponse = new LayersResponse(layerVOList, pageLayerVO.getTotalElements(), paginator);
+            CustomResponse<LayersResponse> customResponse = new CustomResponse<>();
+            customResponse.setData(layersResponse);
+            customResponse.setMsg("success");
+            customResponse.setCode(HttpStatus.OK.value());
+            return ResponseEntity.ok(customResponse);
+        }
+
     }
 
     @PutMapping("/layers/{id}")

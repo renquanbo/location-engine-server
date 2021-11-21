@@ -15,7 +15,9 @@ public class AnchorDTO {
 
     private Integer anchorGroup;
 
-    private Integer layer;
+    private Integer layerId;
+
+    private Integer layerNumber;
 
     public Integer getId() {
         return id;
@@ -65,11 +67,19 @@ public class AnchorDTO {
         this.anchorGroup = anchorGroup;
     }
 
-    public Integer getLayer() {
-        return layer;
+    public Integer getLayerId() {
+        return layerId;
     }
 
-    public void setLayer(Integer layer) {
-        this.layer = layer;
+    public void setLayerId(Integer layerId) {
+        this.layerId = layerId;
+    }
+
+    public Integer getLayerNumber() {
+        return layerNumber;
+    }
+
+    public void setLayerNumber(Integer layerNumber) {
+        this.layerNumber = layerNumber;
     }
 }
